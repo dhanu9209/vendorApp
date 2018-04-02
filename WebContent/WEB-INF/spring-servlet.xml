@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/task 
+	http://www.springframework.org/schema/task/spring-task-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+<!-- connection properties  creation  -->
+	
+	<bean class=" org.springframework.jdbc.datasource.DriverManagerDataSource" name="dObj" 
+	 p:driverClassName="oracle.jdbc.driver.OracleDriver" 
+	 p:url="jdbc:oracle:thin:@localhost:1521:xe"
+	 p:username="system"
+	 p:password="tiger" />
+	 
+<!-- 	 hibernate configuration -->
+	<bean class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" name="sObj">
+	<property name="dataSource" ref="dObj"></property>  
+	
+	<property name="hibernateProperties">
+	<props> 
+	<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop>
+	<prop key="hibernate.hbm2ddl.auto">update</prop>
+	<prop key="hibernate.show_sql">true</prop>
+	</props>
+	</property>
+	
+	<property name="annotatedClasses">
+	<list>
+	<value>com.app.model.Location</value>
+	<value>com.app.model.Customer</value>
+	<value>com.app.model.Vendor</value>
+	<value>com.app.model.Document</value>
+	<value>com.app.model.Item</value>
+	<value>com.app.model.VDMSUser</value>
+	</list>
+	
+	</property>
+	</bean>
+<!-- 	 hibernate template object configuration  -->
+	
+	
+	<bean class="org.springframework.orm.hibernate3.HibernateTemplate" name="ht"  p:sessionFactory-ref="sObj"/> 
+	
+<!-- 	 Annotated all annotations -->
+	 <context:component-scan base-package="com.app"></context:component-scan>
+<!-- 	 UI pages(view Resolver) -->
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/jsps/"
+		p:suffix=".jsp"/>
+<!-- 	 multi part view resolver -->
+	 <bean  class="org.springframework.web.multipart.commons.CommonsMultipartResolver" name="multipartResolver" p:maxUploadSize="41943040" p:maxInMemorySize="100000" /> 
+	 
+	 
+	 
+<bean class="org.springframework.web.servlet.view.XmlViewResolver " name="xmlviewResolver"  p:order="0" p:location="/WEB-INF/spring-view.xml"/>
+	 
+<!-- 	 mail configuration -->
+
+
+<bean class="org.springframework.mail.javamail.JavaMailSenderImpl" name="mailsender">
+<property name="host" value="smtp.gmail.com"/>
+<property name="port" value="587"/>
+<property name="username" value="dhanu9209@gmail.com"/>
+<property name="password" value="7075251355"/>
+
+<property name="javaMailProperties">
+<props>
+<prop key="mail.smtp.auth">true</prop>
+<prop key="mail.smtp.starttls.enable">true</prop>
+</props>
+</property>
+</bean>
+	</beans>
